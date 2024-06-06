@@ -49,7 +49,7 @@ namespace PokemonReviewApp.Controllers
             return Ok(country);
         }
 
-        [HttpGet("/owners/{ownerId}")]
+        [HttpGet("owners/{ownerId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(Country))]
         public IActionResult GetCountryOfAnOwner(int ownerId)
