@@ -54,10 +54,40 @@ namespace PokemonReviewApp.Controllers
         public IActionResult GetPokemonByCategory(int categoryId)
         {
             var pokemons = _mapper.Map<List<PokemonDTO>>(_categoryRepository.GetPokemonsByCategory(categoryId));
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(pokemons);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCategory([FromBody] CategoryCreateDTO categoryCreate)
+        {
+            if (categoryCreate == null)
+                return BadRequest(ModelState);
+            var category = _categoryRepository.GetCategories()
+                .Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if(category != null)
+            {
+                ModelState.AddModelError("","Category already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+
+            var categoryMap = _mapper.Map<Category>(categoryCreate);
+            if (!_categoryRepository.CreateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
 
     }
