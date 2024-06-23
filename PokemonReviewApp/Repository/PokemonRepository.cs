@@ -1,4 +1,5 @@
 ﻿using PokemonReviewApp.Data;
+using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 
@@ -66,6 +67,12 @@ namespace PokemonReviewApp.Repository
         public ICollection<Pokemon> GetPokemons()
         {
             return _context.Pokemons.OrderBy(p=> p.Id).ToList();
+        }
+
+        public Pokemon GetPokemonsTrimToUpper(PokemonCreateDTO pokemonCreate)
+        {
+            return GetPokemons().Where(c => c.Name.Trim().ToUpper() == pokemonCreate.Name.Trim().ToUpper())
+                .FirstOrDefault();
         }
 
         public bool PokemonExists(int id)
